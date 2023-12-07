@@ -1,0 +1,50 @@
+{
+  "name": "assistant-robot",
+  "version": "0.0.1",
+  "description": "An assistant widget, have a 3D robot which can interact with user, have a simple LLM which can chat with user.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./languageModels": {
+      "import": "./dist/LanguageModel.mjs",
+      "require": "./dist/LanguageModel.js"
+    }
+  },
+  "dependencies": {
+    "@mediapipe/face_detection": "^0.4.1646425229",
+    "@tensorflow-models/face-detection": "^1.0.2",
+    "@tensorflow-models/qna": "^1.0.2",
+    "three": "^0.158.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.159.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "eslint": "^8.55.0",
+    "typescript": "^5.3.2",
+    "vite": "^5.0.4"
+  },
+  "scripts": {
+    "dev": "vite example",
+    "build": "vite build && tsc",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "assistant",
+    "robot",
+    "web-component",
+    "html",
+    "LLM",
+    "AI",
+    "3D",
+    "bert",
+    "UI"
+  ],
+  "author": "ymrdf",
+  "license": "MIT"
+}

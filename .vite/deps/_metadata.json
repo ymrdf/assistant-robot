@@ -1,0 +1,41 @@
+{
+  "hash": "c22e9886",
+  "browserHash": "20a74541",
+  "optimized": {
+    "three": {
+      "src": "../../node_modules/three/build/three.module.js",
+      "file": "three.js",
+      "fileHash": "0c285ad9",
+      "needsInterop": false
+    },
+    "three/addons/capabilities/WebGL.js": {
+      "src": "../../node_modules/three/examples/jsm/capabilities/WebGL.js",
+      "file": "three_addons_capabilities_WebGL__js.js",
+      "fileHash": "b4f3664b",
+      "needsInterop": false
+    },
+    "three/addons/loaders/GLTFLoader.js": {
+      "src": "../../node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "file": "three_addons_loaders_GLTFLoader__js.js",
+      "fileHash": "0c0abae8",
+      "needsInterop": false
+    },
+    "three/addons/controls/DragControls.js": {
+      "src": "../../node_modules/three/examples/jsm/controls/DragControls.js",
+      "file": "three_addons_controls_DragControls__js.js",
+      "fileHash": "b040a842",
+      "needsInterop": false
+    },
+    "three/addons/controls/OrbitControls.js": {
+      "src": "../../node_modules/three/examples/jsm/controls/OrbitControls.js",
+      "file": "three_addons_controls_OrbitControls__js.js",
+      "fileHash": "805707d7",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-KXSSFLXC": {
+      "file": "chunk-KXSSFLXC.js"
+    }
+  }
+}
