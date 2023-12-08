@@ -1,3 +1,4 @@
+import { TEventListenFunc } from "./type";
 import type { Answer } from "@tensorflow-models/qna/dist/question_and_answer";
 
 export function isiOS() {
@@ -46,4 +47,35 @@ export function findHighestScoreItem(data: Answer[]) {
   }
 
   return maxScoreItem;
+}
+
+export class EventListener {
+  private listeners: { [key: string]: TEventListenFunc[] | undefined } = {};
+
+  addEventListener(name: string, func: TEventListenFunc) {
+    if (this.listeners[name]) {
+      this.get(name).push(func);
+    } else {
+      this.listeners[name] = [func];
+    }
+  }
+
+  removeEventListener(name: string, func: TEventListenFunc) {
+    if (!this.listeners[name]) {
+      return;
+    }
+    this.listeners[name] = this.get(name).filter(
+      (listener) => listener !== func
+    );
+  }
+
+  emit(event: string, ...args: any[]) {
+    this.get(event).map((listener) => {
+      listener(...args);
+    });
+  }
+
+  get(name: string) {
+    return this.listeners[name] || [];
+  }
 }

@@ -1,18 +1,20 @@
 import * as mpFaceDetection from "@mediapipe/face_detection";
 import * as faceDetection from "@tensorflow-models/face-detection";
 import type { FaceDetector } from "@tensorflow-models/face-detection";
-import { VIDEO_SIZE, TARGET_FPS } from "./constants";
-import { isMobile } from "./utils";
+import { VIDEO_SIZE, TARGET_FPS, EUserDetectorStatus } from "./constants";
+import { isMobile, EventListener } from "./utils";
 import { IUserDetectorConfig } from "./type";
 
-export class UserDetector {
+export class UserDetector extends EventListener {
   video;
   detector: FaceDetector | undefined;
   videoWidth;
   videoHeight;
   options: IUserDetectorConfig;
+  status: EUserDetectorStatus = EUserDetectorStatus.init;
 
   constructor(options: IUserDetectorConfig = {}) {
+    super();
     this.options = options;
     this.video = document.createElement("video");
     this.videoWidth = isMobile()
@@ -22,19 +24,24 @@ export class UserDetector {
       ? VIDEO_SIZE.small.height
       : VIDEO_SIZE.big.height;
 
-    this.init();
-  }
-
-  init() {
-    this.initVideo();
     this.createDetector();
   }
 
+  // init() {
+  //   Promise.all([this.initVideo(), this.createDetector()]).then(() => {
+  //     if (!this.video.paused && this.detector) {
+  //       this.setStatus(EUserDetectorStatus.ready);
+  //     }
+  //   });
+  // }
+
   async initVideo() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error(
+      console.warn(
         "Browser API navigator.mediaDevices.getUserMedia not available"
       );
+      this.setStatus(EUserDetectorStatus.userMediaUnavailable);
+      return;
     }
 
     const videoConfig = {
@@ -48,34 +55,49 @@ export class UserDetector {
         },
       },
     };
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
 
-    const stream = await navigator.mediaDevices.getUserMedia(videoConfig);
+      this.video.srcObject = stream;
 
-    this.video.srcObject = stream;
+      await new Promise((resolve) => {
+        this.video.onloadedmetadata = () => {
+          resolve(this.video);
+        };
+      });
 
-    await new Promise((resolve) => {
-      this.video.onloadedmetadata = () => {
-        resolve(this.video);
-      };
-    });
-
-    this.video.play();
+      this.video.play();
+      this.setStatus(EUserDetectorStatus.ready);
+    } catch (error: any) {
+      console.warn(error);
+      if (error.name === "NotAllowedError") {
+        this.setStatus(EUserDetectorStatus.openCameraRejected);
+      } else {
+        this.setStatus(EUserDetectorStatus.openCameraRejected);
+        console.error("Error:", error);
+      }
+    }
   }
 
   async createDetector() {
-    console.log("--->", mpFaceDetection.VERSION);
-    this.detector = await faceDetection.createDetector(
-      faceDetection.SupportedModels.MediaPipeFaceDetector,
-      {
-        runtime: "mediapipe",
-        modelType: "short",
-        maxFaces: 1,
-        solutionPath: this.options.solutionPath
-          ? this.options.solutionPath
-          : `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@${mpFaceDetection.VERSION}`, //`http://localhost:5173/face_detection`,
-        // solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@${mpFaceDetection.VERSION}`,
-      }
-    );
+    try {
+      this.detector = await faceDetection.createDetector(
+        faceDetection.SupportedModels.MediaPipeFaceDetector,
+        {
+          runtime: "mediapipe",
+          modelType: "short",
+          maxFaces: 1,
+          solutionPath: this.options.solutionPath
+            ? this.options.solutionPath
+            : `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@${mpFaceDetection.VERSION}`,
+        }
+      );
+
+      return;
+    } catch (e) {
+      console.warn(e);
+      this.setStatus(EUserDetectorStatus.faceDetectorCreateError);
+    }
   }
 
   async getFaces() {
@@ -114,5 +136,10 @@ export class UserDetector {
     } else {
       return [];
     }
+  }
+
+  setStatus(v: EUserDetectorStatus) {
+    this.status = v;
+    this.emit("statusChange", this.status);
   }
 }

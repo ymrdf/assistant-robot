@@ -1,6 +1,6 @@
 {
   "name": "assistant-robot",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha",
   "description": "An assistant widget, have a 3D robot which can interact with user, have a simple LLM which can chat with user.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,7 +29,7 @@
     "vite": "^5.0.4"
   },
   "scripts": {
-    "dev": "vite example",
+    "dev": "vite example --port 7000",
     "build": "vite build && tsc",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"

@@ -13,9 +13,16 @@ export interface ILanguageModelConfig<T extends LanguageModel>
   Model: ILanguageModelSubclass<T>;
 }
 
-export interface IChatBoxConfig {
+export interface IOperation {
+  key: string;
+  text: string;
+  disable: boolean;
+}
+
+export interface IOperationBoxBoxConfig {
   hide?: boolean;
   chatBoxClassName?: string;
+  operationList?: IOperation[];
 }
 
 export interface IModelConfig {
@@ -60,9 +67,11 @@ export interface IUserDetectorConfig {
 export interface IAssistantRobotConfig<T extends LanguageModel> {
   className: string;
   languageModel: ILanguageModelConfig<T>;
-  chatBox: IChatBoxConfig;
+  operationBox: IOperationBoxBoxConfig;
   robotModel: TRobotModelConfig;
   userDetector: IUserDetectorConfig;
 }
 
 export type TCallback = () => void;
+
+export type TEventListenFunc = (...args: any[]) => void;

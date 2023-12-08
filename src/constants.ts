@@ -65,6 +65,11 @@ export const CONTAINER_BODY = `">
       transform: translate(-50%);
       padding: 12px 20px;
       text-align: center;
+      animation: fadeInOut 0.4s ease-in-out;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
     .${ASSISTANT_TIP_CONTAINER}::after{
       content: '';
@@ -87,30 +92,129 @@ export const CONTAINER_BODY = `">
 <div>
 `;
 
-export const ROBOT_CHAT_INPUT_CLASS = "assistant-robot-input";
-export const ROBOT_CHAT_BTN_CLASS = "assistant-robot-btn";
+export const tips = {
+  openCamera: `To interactive with the assistant, we'd like to access your device's camera.Take it easy, your pictures and information won't be sent anywhere or be stored.`,
+  alreadyOpenCamera: "the camera have be opened",
+};
 
-export const ROBOT_CHAT_BOX_HEAD = '<div class="assistant-robot-chartbox';
+export enum EMenuKey {
+  openCamera = "openCamera",
+  hello = "hello",
+}
 
-export const ROBOT_CHAT_BOX_BODY = `">
+export const ROBOT_OPERATION_INPUT_CLASS = "assistant-robot-input";
+export const ROBOT_OPERATION_BTN_CLASS = "assistant-robot-btn";
+export const OPERATION_CONTAINER_CLASS = "operation_container";
+export const MENU_BTN_CLASS = "menu_btn";
+export const MENU_LIST_CLASS = "menu_list";
+
+export const ROBOT_OPERATION_BOX_HEAD = '<div class="assistant-robot-chartbox';
+
+export const ROBOT_OPERATION_BOX_BODY = `">
 <style>
   .assistant-robot-chartbox{
     width: 100%;
+    height: 32px;
     display: flex;
+    flex: 0 0 auto;
     flex-wrap: wrap;
+    align-items: center;
+    border-radius: 54px;
+    box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16),
+    0 3px 6px 0 rgba(0, 0, 0, 0.12),
+    0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    padding: 10px 12px;
   }
   .assistant-robot-input{
     flex: 1;
     min-width: 200px;
     background: rgba(0,0,0,0);
-    border: 1px solid #aaaaaa;
+    border: 1px solid #dedede;
+    height: 28px;
+    margin-right: 6px;
+    outline:none;
+    color: #666666;
   }
   .assistant-robot-btn{
     flex: 0 0 auto;
+    height: 24px;
+  }
+
+  .${OPERATION_CONTAINER_CLASS}{
+    position: relative;
+    height: 24px;
+  }
+  .${MENU_BTN_CLASS}{
+    color: #dedede;
+    width:24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .${MENU_LIST_CLASS} {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    animation: fadeInOut 0.4s ease-in-out;
+    list-style: none;
+  }
+
+  .${MENU_LIST_CLASS} li{
+    line-height: 32px;
+    text-wrap: nowrap;
+    border-bottom: 1px solid #dedede;
+    cursor: pointer;
+  }
+
+  .${MENU_LIST_CLASS} li:last-child{
+    border-bottom: none;
+  }
+
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
 </style>
-<input class="${ROBOT_CHAT_INPUT_CLASS}" type="text" />
-<button class="${ROBOT_CHAT_BTN_CLASS}">ask</button>
+<span class="${OPERATION_CONTAINER_CLASS}">
+  <svg
+    t="1702017878997"
+    class="${MENU_BTN_CLASS}"
+    viewBox="0 0 1024 1024"
+    version="1.1"
+    p-id="1322"
+    width="32"
+    height="32"
+    >
+    <path
+      d="M512 512m-116.949333 0a116.949333 116.949333 0 1 0 233.898666 0 116.949333 116.949333 0 1 0-233.898666 0Z"
+      fill="currentColor"
+      p-id="1323"
+    ></path>
+    <path
+      d="M512 159.616m-116.949333 0a116.949333 116.949333 0 1 0 233.898666 0 116.949333 116.949333 0 1 0-233.898666 0Z"
+      fill="currentColor"
+      p-id="1324"
+    ></path>
+    <path
+      d="M512 864.384m-116.949333 0a116.949333 116.949333 0 1 0 233.898666 0 116.949333 116.949333 0 1 0-233.898666 0Z"
+      fill="currentColor"
+      p-id="1325"
+    ></path>
+  </svg>
+  <ul class="${MENU_LIST_CLASS}">
+    <li data-id="${EMenuKey.openCamera}">Open the Camera</li>
+`;
+
+export const ROBOT_OPERATION_BOX_TAIL = `</ul>
+</span>
+<input class="${ROBOT_OPERATION_INPUT_CLASS}" type="text" />
+<button class="${ROBOT_OPERATION_BTN_CLASS}">ask</button>
 </div>`;
 
 export enum ELanguageModelStatus {
@@ -122,3 +226,22 @@ export enum ELanguageModelStatus {
 export const ONE_LETTER_READ_TIME = 50;
 
 export const READ_WAIT_TIME = 2000;
+
+export enum EUserDetectorStatus {
+  init = "init",
+  ready = "ready",
+  openCameraRejected = "openCameraRejected",
+  userMediaUnavailable = "userMediaUnavailable",
+  faceDetectorCreateError = "faceDetectorCreateError",
+  error = "error",
+}
+
+export const USER_DETECTOR_STATUS_CHANGE_EVENT = "userDetectorStatusChange";
+
+export enum EAssistantEvent {
+  languageModelLoaded = "languageModelLoaded",
+  userDetectorStatusChange = USER_DETECTOR_STATUS_CHANGE_EVENT,
+  menuClick = "menuClick",
+  ask = "ask",
+  say = "say",
+}

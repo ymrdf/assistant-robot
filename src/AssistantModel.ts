@@ -130,7 +130,6 @@ export class AssistantModel {
         this.mixer = new AnimationMixer(model);
         this.clips = gltf.animations;
         this.scene.add(model);
-        // TODO: PLAY Idle
         this.startIdleAction();
         this.animate();
       },
@@ -154,7 +153,11 @@ export class AssistantModel {
   }
 
   haltIdleAction(durationInSeconds: number) {
-    this.idleAction?.halt(durationInSeconds);
+    this.idleAction?.stop();
+    setTimeout(() => {
+      this.idleAction?.play();
+    }, durationInSeconds);
+    // this.idleAction?.halt(durationInSeconds);
   }
 
   hello() {
@@ -172,13 +175,16 @@ export class AssistantModel {
     }: { loop?: boolean; weight?: number; timeScale?: number } = {}
   ) {
     if (!this.clips || !this.mixer) return;
+
     const clip = AnimationClip.findByName(this.clips, name);
     const action = this.mixer.clipAction(clip);
+
     action.enabled = true;
     action.setLoop(loop ? LoopRepeat : LoopOnce, Infinity);
     action.setEffectiveTimeScale(timeScale);
     action.setEffectiveWeight(weight);
     action.reset();
+    this.haltIdleAction(action.getClip().duration * 1000);
     action.play();
   }
 
