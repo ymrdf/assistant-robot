@@ -75,3 +75,14 @@ export interface IAssistantRobotConfig<T extends LanguageModel> {
 export type TCallback = () => void;
 
 export type TEventListenFunc = (...args: any[]) => void;
+
+export interface IActionConfig {
+  // If loop, default false
+  loop?: boolean;
+  // The degree of influence of this action (in the interval [0, 1]). Values between 0 (no impact) and 1 (full impact) can be used to blend between several actions. Default is 1.
+  weight?: number;
+  // Scaling factor for the time. A value of 0 causes the animation to pause. Negative values cause the animation to play backwards. Default is 1.
+  timeScale?: number;
+  // The number of repetitions of the action, default 1;
+  repetitions?: number;
+}

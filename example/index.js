@@ -1,17 +1,30 @@
-// import { Assistant } from "../src/index.ts";
+// import { Assistant, EAssistantEvent } from "../src/index.ts";
 // import { MobileBertModel } from "../src/LanguageModel.ts";
-import { Assistant } from "../dist/index.mjs";
+import { Assistant, EAssistantEvent } from "../dist/index.mjs";
 import { MobileBertModel } from "../dist/LanguageModel.mjs";
 
 const modelContainer = document.querySelector("#robot");
-new Assistant(modelContainer, {
+const assistant = new Assistant(modelContainer, {
   robotModel: {
     modelConfig: {
       position: [0, 0, 0],
+      idleActionName: "idle-move",
     },
   },
   userDetector: {
     solutionPath: `/face_detection`,
+  },
+  operationBox: {
+    operationList: [
+      {
+        key: "hello",
+        text: "play hello",
+      },
+      {
+        key: "dance",
+        text: "dance",
+      },
+    ],
   },
   languageModel: {
     Model: MobileBertModel,
@@ -48,4 +61,12 @@ new Assistant(modelContainer, {
       his honor.[10] There has been a resurgence in popular interest in Tesla since the 1990s.[11]
     `,
   },
+});
+
+assistant.addEventListener(EAssistantEvent.menuClick, (key) => {
+  if (key === "hello") {
+    assistant.assistantPlay("hello");
+  } else if (key === "dance") {
+    assistant.assistantPlay("idle-move");
+  }
 });

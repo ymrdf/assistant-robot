@@ -15,7 +15,7 @@ import {
 } from "./constants";
 import { parseHTML, EventListener } from "./utils";
 import type { LanguageModel } from "./LanguageModel";
-import type { IAssistantRobotConfig } from "./type";
+import type { IAssistantRobotConfig, IActionConfig } from "./type";
 
 export class Assistant<T extends LanguageModel> extends EventListener {
   assistantModel;
@@ -115,8 +115,8 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     this.assistantModel.say(text);
   }
 
-  assistantPlay(name: string) {
-    this.assistantModel.play(name);
+  assistantPlay(name: string, config?: IActionConfig) {
+    this.assistantModel.play(name, config);
   }
 
   async lookAtUser() {

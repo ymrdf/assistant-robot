@@ -1,6 +1,6 @@
 {
   "name": "assistant-robot",
-  "version": "0.0.2-alpha",
+  "version": "0.0.2-beta",
   "description": "An assistant widget, have a 3D robot which can interact with user, have a simple LLM which can chat with user.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

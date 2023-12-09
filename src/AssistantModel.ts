@@ -22,8 +22,8 @@ import {
   ONE_LETTER_READ_TIME,
   READ_WAIT_TIME,
 } from "./constants";
-import defaultModel from "./assets/idle-move.glb?url";
-import type { TRobotModelConfig, IModelConfig } from "./type";
+import defaultModel from "./assets/potato.glb?url";
+import type { TRobotModelConfig, IModelConfig, IActionConfig } from "./type";
 
 export class AssistantModel {
   clock = new Clock();
@@ -142,22 +142,27 @@ export class AssistantModel {
 
   startIdleAction() {
     if (!this.clips || !this.mixer) return;
-    const clip = AnimationClip.findByName(this.clips, "idle");
+    const clip = AnimationClip.findByName(
+      this.clips,
+      this.options.modelConfig?.idleActionName || MODEL_CONFIG.idleActionName
+    );
     const action = this.mixer.clipAction(clip);
     this.idleAction = action;
     action.enabled = true;
     action.setLoop(LoopRepeat, Infinity);
     action.setEffectiveTimeScale(1);
-    action.setEffectiveWeight(0.5);
+    action.setEffectiveWeight(1);
     action.play();
   }
 
   haltIdleAction(durationInSeconds: number) {
     this.idleAction?.stop();
-    setTimeout(() => {
-      this.idleAction?.play();
-    }, durationInSeconds);
-    // this.idleAction?.halt(durationInSeconds);
+    console.log();
+    if (durationInSeconds !== Infinity) {
+      setTimeout(() => {
+        this.idleAction?.play();
+      }, durationInSeconds);
+    }
   }
 
   hello() {
@@ -172,19 +177,27 @@ export class AssistantModel {
       loop = false,
       weight = 1,
       timeScale = 1,
-    }: { loop?: boolean; weight?: number; timeScale?: number } = {}
+      repetitions = Infinity,
+    }: IActionConfig = {}
   ) {
     if (!this.clips || !this.mixer) return;
 
     const clip = AnimationClip.findByName(this.clips, name);
+    if (!clip) return;
     const action = this.mixer.clipAction(clip);
 
     action.enabled = true;
-    action.setLoop(loop ? LoopRepeat : LoopOnce, Infinity);
-    action.setEffectiveTimeScale(timeScale);
+    action.setLoop(loop ? LoopRepeat : LoopOnce, repetitions);
+    action.setEffectiveTimeScale(2 || timeScale);
     action.setEffectiveWeight(weight);
+    console.log("action2", action, action.time);
+
+    console.log("action", action.time);
+    const repetTime = loop ? action.repetitions : 1;
+    this.haltIdleAction(
+      ((action.getClip().duration * repetTime) / action.timeScale) * 1000
+    );
     action.reset();
-    this.haltIdleAction(action.getClip().duration * 1000);
     action.play();
   }
 
