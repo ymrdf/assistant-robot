@@ -8,36 +8,44 @@ import {
   MENU_LIST_CLASS,
 } from "./constants";
 import { parseHTML } from "./utils";
-import { IOperationBoxBoxConfig } from "./type";
+import { IOperationBoxConfig } from "./type";
 
+/**
+ * the manager to manage the operation of assistant robot.
+ * include the operation box's render.
+ * include the operation's implementation.
+ */
 export class OperationManager {
   btnDom: HTMLButtonElement | undefined;
   inputDom: HTMLInputElement | undefined;
   menuBtnDom: HTMLElement | undefined;
   menuDom: HTMLElement | undefined;
+  // ask function
   onAsk;
+  // menu click callback
   onMenuClick;
   constructor(
     container: Element,
     onAsk: (question: string) => void,
     onMenuClick: (key: string) => void,
-    options: IOperationBoxBoxConfig = {}
+    options: IOperationBoxConfig = {}
   ) {
     this.onAsk = onAsk;
     this.onMenuClick = onMenuClick;
     if (!options.hide) {
-      this.initChatBox(container, options);
+      this.initOperationBox(container, options);
       this.addEventListener();
     }
   }
 
-  initChatBox(container: Element, options: IOperationBoxBoxConfig = {}) {
+  // render operation box
+  initOperationBox(container: Element, options: IOperationBoxConfig = {}) {
     let htmlStr;
-    if (options.chatBoxClassName) {
+    if (options.perationBoxClassName) {
       htmlStr =
         ROBOT_OPERATION_BOX_HEAD +
         " " +
-        options.chatBoxClassName +
+        options.perationBoxClassName +
         ROBOT_OPERATION_BOX_BODY;
     } else {
       htmlStr = ROBOT_OPERATION_BOX_HEAD + ROBOT_OPERATION_BOX_BODY;
@@ -49,7 +57,7 @@ export class OperationManager {
         options.operationList
           .map(
             (item) =>
-              `<li data-id="${item.key}" data-disable="${item.disable}">${item.text}</li>`
+              `<li data-id="${item.key}" data-disabled="${item.disabled}">${item.text}</li>`
           )
           .join("");
     }
@@ -75,6 +83,7 @@ export class OperationManager {
     ) as HTMLElement;
   }
 
+  // set event listeners
   addEventListener() {
     this.btnDom?.addEventListener("click", () => {
       if (this.inputDom?.value) {
@@ -99,7 +108,7 @@ export class OperationManager {
     });
 
     this.menuDom?.addEventListener("click", (event: MouseEvent) => {
-      var element = event.target as HTMLElement;
+      const element = event.target as HTMLElement;
       if (element.tagName === "LI") {
         // Access the value of the data-id attribute
         const clickedItemId = element.getAttribute("data-id");

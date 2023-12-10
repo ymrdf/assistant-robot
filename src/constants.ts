@@ -1,6 +1,8 @@
 import type { IModelSceneConfig, IModelConfig } from "./type";
+// Target fps
 export const TARGET_FPS = 60;
 
+// Default configs of the 3d model of the robot
 export const MODEL_CONFIG: IModelConfig = {
   position: [0, 0, 0],
   rotation: [0, Math.PI, 0],
@@ -8,7 +10,7 @@ export const MODEL_CONFIG: IModelConfig = {
   idleActionName: "idle",
   helloContent: "Hi, you can talk to me!",
 };
-
+// Default configs for the scene of the assistant robot's 3d model.
 export const MODEL_SCENE_CONFIG: IModelSceneConfig = {
   backgroundColor: 0x000000,
   backgroundAlpha: 0,
@@ -30,14 +32,16 @@ export const MODEL_SCENE_CONFIG: IModelSceneConfig = {
   },
 };
 
+// video size's for the camera
 export const VIDEO_SIZE = {
   big: { width: 640, height: 480 },
   small: { width: 360, height: 270 },
 };
 
+// the follow constants are html of this component
 export const ASSISTANT_MODEL_CONTAINER_CLASS =
   "assistant-robot-model-container";
-export const ASSISTANT_TIP_CONTAINER = "assistant_tip_container";
+export const ASSISTANT_TIP_CONTAINER = "assistant-robot-tip-container";
 
 export const CONTAINER_HEAD = `<div class="assistant-robot-container `;
 
@@ -92,29 +96,34 @@ export const CONTAINER_BODY = `">
 <div>
 `;
 
+// the tips to inform user
 export const tips = {
   openCamera: `To interactive with the assistant, we'd like to access your device's camera.Take it easy, your pictures and information won't be sent anywhere or be stored.`,
   alreadyOpenCamera: "the camera have be opened",
 };
 
+// default operation menu item's keys
 export enum EMenuKey {
   openCamera = "openCamera",
   hello = "hello",
 }
 
+// the follow constants are html of the operation part
 export const ROBOT_OPERATION_INPUT_CLASS = "assistant-robot-input";
 export const ROBOT_OPERATION_BTN_CLASS = "assistant-robot-btn";
-export const OPERATION_CONTAINER_CLASS = "operation_container";
-export const MENU_BTN_CLASS = "menu_btn";
-export const MENU_LIST_CLASS = "menu_list";
+export const OPERATION_CONTAINER_CLASS = "assistant-robot-operation-container";
+export const MENU_BTN_CLASS = "assistant-robot-menu-btn";
+export const MENU_LIST_CLASS = "assistant-robot-menu-list";
 
-export const ROBOT_OPERATION_BOX_HEAD = '<div class="assistant-robot-chartbox';
+export const ROBOT_OPERATION_BOX_HEAD =
+  '<div class="assistant-robot-operationbox';
 
 export const ROBOT_OPERATION_BOX_BODY = `">
 <style>
-  .assistant-robot-chartbox{
+  .assistant-robot-operationbox{
+    box-sizing: border-box;
     width: 100%;
-    height: 32px;
+    height: 52px;
     display: flex;
     flex: 0 0 auto;
     flex-wrap: wrap;
@@ -123,6 +132,7 @@ export const ROBOT_OPERATION_BOX_BODY = `">
     box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16),
     0 3px 6px 0 rgba(0, 0, 0, 0.12),
     0 5px 12px 4px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
     padding: 10px 12px;
   }
   .assistant-robot-input{
@@ -145,7 +155,7 @@ export const ROBOT_OPERATION_BOX_BODY = `">
     height: 24px;
   }
   .${MENU_BTN_CLASS}{
-    color: #dedede;
+    color: #aaaaaa;
     width:24px;
     height: 24px;
     cursor: pointer;
@@ -208,7 +218,7 @@ export const ROBOT_OPERATION_BOX_BODY = `">
     ></path>
   </svg>
   <ul class="${MENU_LIST_CLASS}">
-    <li data-id="${EMenuKey.openCamera}">Open the Camera</li>
+    <li data-id="${EMenuKey.openCamera}">eye contact</li>
 `;
 
 export const ROBOT_OPERATION_BOX_TAIL = `</ul>
@@ -217,31 +227,48 @@ export const ROBOT_OPERATION_BOX_TAIL = `</ul>
 <button class="${ROBOT_OPERATION_BTN_CLASS}">ask</button>
 </div>`;
 
+// the status of the language model
 export enum ELanguageModelStatus {
   loading = 1,
   ready = 2,
   error = 3,
 }
 
+// the time for user to read one letter
 export const ONE_LETTER_READ_TIME = 50;
 
+// the wait time for the tip to hide after the user read what the robot speak.
 export const READ_WAIT_TIME = 2000;
 
+// user dectect module's status.
 export enum EUserDetectorStatus {
+  // init
   init = "init",
+  // ready to detect
   ready = "ready",
+
+  // user rejected to open the camera
   openCameraRejected = "openCameraRejected",
+  // user's brower can not get media
   userMediaUnavailable = "userMediaUnavailable",
+  // the face detect model loading error
   faceDetectorCreateError = "faceDetectorCreateError",
+  // the face detect module have error
   error = "error",
 }
 
 export const USER_DETECTOR_STATUS_CHANGE_EVENT = "userDetectorStatusChange";
 
+// the events which assistant robot can emit.
 export enum EAssistantEvent {
+  // language model loading completed
   languageModelLoaded = "languageModelLoaded",
+  // user dectect module's status changed
   userDetectorStatusChange = USER_DETECTOR_STATUS_CHANGE_EVENT,
+  // operation menu be clicked
   menuClick = "menuClick",
+  // user asked something
   ask = "ask",
+  // the robot said something
   say = "say",
 }

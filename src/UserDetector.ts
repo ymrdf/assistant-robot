@@ -5,12 +5,21 @@ import { VIDEO_SIZE, TARGET_FPS, EUserDetectorStatus } from "./constants";
 import { isMobile, EventListener } from "./utils";
 import { IUserDetectorConfig } from "./type";
 
+/**
+ * user detect module.open the camera to detect the user's face.
+ */
 export class UserDetector extends EventListener {
+  // video tag dom
   video;
+  // face detector
   detector: FaceDetector | undefined;
+  // the width of camera and video
   videoWidth;
+  // the height of camera and video
   videoHeight;
+  // configs for this module
   options: IUserDetectorConfig;
+  // status of this module
   status: EUserDetectorStatus = EUserDetectorStatus.init;
 
   constructor(options: IUserDetectorConfig = {}) {
@@ -24,17 +33,34 @@ export class UserDetector extends EventListener {
       ? VIDEO_SIZE.small.height
       : VIDEO_SIZE.big.height;
 
-    this.createDetector();
+    if (navigator.permissions) {
+      navigator.permissions
+        // @ts-expect-error chrome support the camera permission
+        .query({ name: "camera" })
+        .then((permissionObj) => {
+          if (permissionObj.state === "granted") {
+            this.init();
+          } else {
+            this.createDetector();
+          }
+        })
+        .catch(() => {
+          this.createDetector();
+        });
+    } else {
+      this.createDetector();
+    }
   }
 
-  // init() {
-  //   Promise.all([this.initVideo(), this.createDetector()]).then(() => {
-  //     if (!this.video.paused && this.detector) {
-  //       this.setStatus(EUserDetectorStatus.ready);
-  //     }
-  //   });
-  // }
+  init() {
+    Promise.all([this.initVideo(), this.createDetector()]).then(() => {
+      if (!this.video.paused && this.detector) {
+        this.setStatus(EUserDetectorStatus.ready);
+      }
+    });
+  }
 
+  // open the camera
   async initVideo() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       console.warn(
@@ -79,6 +105,7 @@ export class UserDetector extends EventListener {
     }
   }
 
+  // create the face detector
   async createDetector() {
     try {
       this.detector = await faceDetection.createDetector(
@@ -100,6 +127,7 @@ export class UserDetector extends EventListener {
     }
   }
 
+  // get faces from the video tag
   async getFaces() {
     if (!this.video.paused && this.detector) {
       return await this.detector.estimateFaces(this.video, {
@@ -110,11 +138,13 @@ export class UserDetector extends EventListener {
     }
   }
 
+  // get face from the video tag
   async getFace() {
     const faces = await this.getFaces();
     return faces[0];
   }
 
+  // get face's position in the video
   async getFacePostion() {
     const face = await this.getFace();
     if (face) {
@@ -125,6 +155,7 @@ export class UserDetector extends EventListener {
     }
   }
 
+  // get the angle to look at the face
   async getFaceAngle() {
     const facePosition = await this.getFacePostion();
     if (facePosition.length > 1) {

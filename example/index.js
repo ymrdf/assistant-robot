@@ -1,7 +1,7 @@
-// import { Assistant, EAssistantEvent } from "../src/index.ts";
-// import { MobileBertModel } from "../src/LanguageModel.ts";
-import { Assistant, EAssistantEvent } from "../dist/index.mjs";
-import { MobileBertModel } from "../dist/LanguageModel.mjs";
+import { Assistant, EAssistantEvent } from "../src/index.ts";
+import { MobileBertModel } from "../src/LanguageModel.ts";
+// import { Assistant, EAssistantEvent } from "../dist/index.mjs";
+// import { MobileBertModel } from "../dist/LanguageModel.mjs";
 
 const modelContainer = document.querySelector("#robot");
 const assistant = new Assistant(modelContainer, {

@@ -13,15 +13,24 @@ import {
   EMenuKey,
   tips,
 } from "./constants";
-import { parseHTML, EventListener } from "./utils";
+import { parseHTML, EventListener, replaceChildren } from "./utils";
 import type { LanguageModel } from "./LanguageModel";
 import type { IAssistantRobotConfig, IActionConfig } from "./type";
 
+/**
+ * the main class of the assistant robot.
+ * After the class is instantiated, a fill funtion assistant robot will be show on the page.
+ */
 export class Assistant<T extends LanguageModel> extends EventListener {
+  // assistant robot's 3d model manager
   assistantModel;
+  // user face detect module
   userDetector;
-  questionManager;
+  // operations for assistant robot
+  operationManager;
+  // language model, to answer user's question
   languageModel;
+  // the assistant's config
   options: IAssistantRobotConfig<T>;
   constructor(el: Element, options: IAssistantRobotConfig<T>) {
     super();
@@ -36,7 +45,7 @@ export class Assistant<T extends LanguageModel> extends EventListener {
       CONTAINER_HEAD + (options.className || "") + CONTAINER_BODY
     )!;
 
-    el.appendChild(container);
+    replaceChildren(el, container);
 
     const assistantModelContainer = container.querySelector(
       "." + ASSISTANT_MODEL_CONTAINER_CLASS
@@ -56,7 +65,7 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     this.languageModel = new options.languageModel.Model(options.languageModel);
     this.languageModel.onLoad(this.handleLanguageModelLoad);
     if (this.languageModel) {
-      this.questionManager = new OperationManager(
+      this.operationManager = new OperationManager(
         container,
         this.ask,
         this.onMenuClick,
@@ -65,6 +74,7 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     }
   }
 
+  // After language model load, to hello the user
   handleLanguageModelLoad = () => {
     this.emit(EAssistantEvent.languageModelLoaded);
     this.assistantSay(
@@ -74,11 +84,13 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     this.assistantModel.hello();
   };
 
+  // emit event when user detector module's status change
   handleUserDetectorStatusChange = (status: EUserDetectorStatus) => {
     this.emit(EAssistantEvent.userDetectorStatusChange, status);
   };
 
   onMenuClick = (key: string) => {
+    // if key is "open camera", init user detect module
     if (EMenuKey.openCamera === key) {
       if (this.userDetector.status === EUserDetectorStatus.ready) {
         this.assistantSay(tips.alreadyOpenCamera);
@@ -93,6 +105,10 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     }
   };
 
+  /**
+   * ask the assistant robot a question
+   * @param question question go ask
+   */
   ask = async (question: string) => {
     this.emit(EAssistantEvent.ask, question);
     if (
@@ -110,15 +126,25 @@ export class Assistant<T extends LanguageModel> extends EventListener {
     }
   };
 
+  /**
+   * make the robot say something
+   * @param text what the robot should say
+   */
   assistantSay(text: string) {
     this.emit(EAssistantEvent.say);
     this.assistantModel.say(text);
   }
 
+  /**
+   * make the robot play a action
+   * @param name name of the action
+   * @param config config of the action
+   */
   assistantPlay(name: string, config?: IActionConfig) {
     this.assistantModel.play(name, config);
   }
 
+  //make the 3d model of the robot to look at user
   async lookAtUser() {
     const faceAngle = await this.userDetector.getFaceAngle();
     if (faceAngle.length > 1) {

@@ -1,18 +1,26 @@
-import { TEventListenFunc } from "./type";
 import type { Answer } from "@tensorflow-models/qna/dist/question_and_answer";
+import { TEventListenFunc } from "./type";
 
+// Is the user's system ios?
 export function isiOS() {
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
+// Is the user's system android?
 export function isAndroid() {
   return /Android/i.test(navigator.userAgent);
 }
 
+// Is the user's device a phone?
 export function isMobile() {
   return isAndroid() || isiOS();
 }
 
+/**
+ * turn a html string to dom
+ * @param htmlString  a html string
+ * @returns a dom tree
+ */
 export function parseHTML(htmlString: string) {
   // Create a new DOMParser
   const parser = new DOMParser();
@@ -24,6 +32,7 @@ export function parseHTML(htmlString: string) {
   return doc.body.firstElementChild;
 }
 
+// find the item with highest score in the answer list of the default language model
 export function findHighestScoreItem(data: Answer[]) {
   if (!Array.isArray(data) || data.length === 0) {
     // Handle empty or invalid input array
@@ -49,6 +58,9 @@ export function findHighestScoreItem(data: Answer[]) {
   return maxScoreItem;
 }
 
+/**
+ * utils class which implement Observer Pattern
+ */
 export class EventListener {
   private listeners: { [key: string]: TEventListenFunc[] | undefined } = {};
 
@@ -78,4 +90,19 @@ export class EventListener {
   get(name: string) {
     return this.listeners[name] || [];
   }
+}
+
+/**
+ * to replace all children of parentNode to a new node
+ * @param parentNode the pareent node
+ * @param newNode the child node will insert to the parent node
+ */
+export function replaceChildren(parentNode: Node, newNode: Node) {
+  // Remove all existing children of the parent node
+  while (parentNode.firstChild) {
+    parentNode.removeChild(parentNode.firstChild);
+  }
+
+  // Append the new node to the parent node
+  parentNode.appendChild(newNode);
 }
