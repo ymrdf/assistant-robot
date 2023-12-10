@@ -107,7 +107,7 @@ export class Assistant<T extends LanguageModel> extends EventListener {
 
   /**
    * ask the assistant robot a question
-   * @param question question go ask
+   * @param question question to ask
    */
   ask = async (question: string) => {
     this.emit(EAssistantEvent.ask, question);
